@@ -1,4 +1,4 @@
-MicroAPRS
+icroAPRS
 ==========
 
 MicroAPRS is an APRS firmware for [MicroModem](http://unsigned.io/micromodem). It supports both normal KISS mode, and a simple serial protocol for easy communication with an Arduino, or other MCU.
@@ -11,7 +11,7 @@ You can buy a complete modem from [my shop](http://unsigned.io/shop), or you can
 - Full modulation and demodulation in software
 - Easy configuration of callsign and path settings
 - Flexibility in how received packets are output over serial connection
-- Persistent configuration stored in EEPROM
+- Persistent configuration stored in EEPROM so it will persist between poweroffs
 - Shorthand functions for sending location updates and messages, so you don't need to manually create the packets
 - Ability to send raw packets
 - Support for settings APRS symbols
@@ -19,14 +19,21 @@ You can buy a complete modem from [my shop](http://unsigned.io/shop), or you can
 - Ability to automatically ACK messages adressed to the modem
 - Can run with open squelch
 - Supports KISS mode for use with programs on a host computer
+- Supports 3.3v and 5v analog inputs (ADC)
+
+The code can be compiled into two version, KISS and Simple Serial. These are defined in the device.h file.
 
 ## KISS mode
 
-When the modem is running in KISS mode, there's really not much more to it than connecting the modem to a computer, opening whatever program you want to use with it, and off you go.
+When the modem is running in KISS mode, there is no text "menu" intereaction. Just connect the modem to a computer, with whatever program you want to use with it, and off you go.
 
-## Modem control - SimpleSerial
+## Modem control - Simple Serial
 
-If you want to use the SimpleSerial protocol, here's how to control the APRS modem over a serial connection. The modem accepts a variety of commands for setting options and sending packets. Generally a command starts with one or more characters defining the command, and then whatever data is needed to set the options for that command. Here's a list of the currently available commands:
+If you want to interact with the mode (TNC) use the Simple Serial protocol. The modem accepts a variety of commands for setting options and sending packets. Generally a command starts with one or more characters defining the command, and then whatever data is needed to set the options for that command. Here's a list of the currently available commands:
+
+### Serial Connection
+
+To connect to the modem use __9600 baud, 8N1__ serial. By default, the firmware uses time-sensitive input, which means that it will buffer serial data as it comes in, and when it has received no data for a few milliseconds, it will start interpreting whatever it has received. This means you need to set your serial terminal program to not send data for every keystroke, but only on new-line, or pressing send or whatever. If you do not want this behaviour, you can compile the firmware with the DEBUG flag set, which will make the modem wait for a new-line character before interpreting the received data. I would generally advise against this though, since it means that you cannot have newline characters in whatever data you want to send!
 
 ##Serial commands
 
@@ -110,15 +117,26 @@ __Here's an example of how to send a location update with power, height and gain
 !=5230.70N/01043.70E-PHG2410MicroAPRS
 ```
 
-### EEPROM Settings
-When saving the configuration, it is written to EEPROM, so it will persist between poweroffs. If a configuration has been stored, it will automatically be loaded when the modem powers up. The configuration can be cleared by sending the "clear configuration" command (`C`).
+## Building the code
+This code does not use the Arduion IDE. The buest way to compile the code is with avr-gcc on a Linux computer.  I use Ubuntu and have these packages installed.
 
-### Serial Connection
+ - sudo apt-get install gcc-avr avrdude 
 
-To connect to the modem use __9600 baud, 8N1__ serial. By default, the firmware uses time-sensitive input, which means that it will buffer serial data as it comes in, and when it has received no data for a few milliseconds, it will start interpreting whatever it has received. This means you need to set your serial terminal program to not send data for every keystroke, but only on new-line, or pressing send or whatever. If you do not want this behaviour, you can compile the firmware with the DEBUG flag set, which will make the modem wait for a new-line character before interpreting the received data. I would generally advise against this though, since it means that you cannot have newline characters in whatever data you want to send!
+After download the repository:
 
-![MicroModem](https://raw.githubusercontent.com/markqvist/MicroModem/master/Design/Images/1.jpg)
+``` bash
+$ mkdir git
+$ cd git
+$ sudo git clone https://github.com/mgrennan/MicroAPRS.git
+$ cd MicroAPRS
+$ make
+``` 
 
-The project has been implemented in your normal C with makefile style, and uses AVR Libc. The firmware is compatible with Arduino-based products, although it was not written in the Arduino IDE.
+The 'flash' scrip will load the compiled code into your Arduino.  You will need to know your tty device and your Arduino type.
 
-Visit [my site](http://unsigned.io) for questions, comments and other details.
+``` bash
+$ ./flash ACM0 m328p
+```
+
+Visit [my site](http://unsigned.io) for questions, comments and other details.  Or email me at Mark at Grennan.com.  
+

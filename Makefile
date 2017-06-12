@@ -18,8 +18,8 @@ TARGET = images/MicroAPRS
 # to get a full listing.
 AVRDUDE_PROGRAMMER = arduino       
 
-AVRDUDE_PORT = /dev/usb    # not really needed for usb 
-#AVRDUDE_PORT = /dev/parport0           # linux
+# AVRDUDE_PORT = /dev/usb    # not really needed for usb 
+AVRDUDE_PORT = /dev/ttyACM1            # linux
 # AVRDUDE_PORT = lpt1		       # windows
 
 ############# Don't need to change below here for most purposes  (Elliot)
