@@ -1,9 +1,11 @@
-icroAPRS
+MicroAPRS
 ==========
 
 MicroAPRS is an APRS firmware for [MicroModem](http://unsigned.io/micromodem). It supports both normal KISS mode, and a simple serial protocol for easy communication with an Arduino, or other MCU.
 
 You can buy a complete modem from [my shop](http://unsigned.io/shop), or you can build one yourself pretty easily. Take a look at the documentation in the [MicroModem](https://github.com/markqvist/MicroModem) repository for information and getting started guides!
+
+Read Quickstart.pdf if you are building your own hardware.  
 
 ## Some features
 
@@ -84,6 +86,34 @@ __C__ | Clear configuration
 __H__ | Print configuration
 
 
+## Building the code
+This code does not use the Arduion IDE. The buest way to compile the code is with avr-gcc on a Linux computer.  I use Ubuntu and have these packages installed.
+
+ - sudo apt-get install gcc-avr avrdude cutecom minicom
+
+After download the repository:
+
+``` bash
+$ mkdir git
+$ cd git
+$ sudo git clone https://github.com/mgrennan/MicroAPRS.git
+$ cd MicroAPRS
+$ make
+``` 
+
+The 'flash' scrip will load the compiled code into your Arduino.  You will need to know your tty device and your Arduino type.
+
+``` bash
+$ ./flash ACM0 m328p
+```
+
+# Using the modem
+Connect to you modem with a serial communication program.  I recomend you start with cutecom.  The baud rate is 9600,N,8,1.
+
+If you are using the KISS you will not get header or prompt.  If you are using the Simple Serial version you should see a header when you press the reset button your your Arduino.  Either you will need to send command as a stream of charactors. No pauses. (Unless you have the DEBUG mode turned on.)  Cutecom will let you do this. It doesn't send the string untill you press enter. With minicom wyou will need to send commands as a cut and paist.
+
+Here are some commands to try.
+
 
 ### Examples
 
@@ -117,26 +147,7 @@ __Here's an example of how to send a location update with power, height and gain
 !=5230.70N/01043.70E-PHG2410MicroAPRS
 ```
 
-## Building the code
-This code does not use the Arduion IDE. The buest way to compile the code is with avr-gcc on a Linux computer.  I use Ubuntu and have these packages installed.
-
- - sudo apt-get install gcc-avr avrdude 
-
-After download the repository:
-
-``` bash
-$ mkdir git
-$ cd git
-$ sudo git clone https://github.com/mgrennan/MicroAPRS.git
-$ cd MicroAPRS
-$ make
-``` 
-
-The 'flash' scrip will load the compiled code into your Arduino.  You will need to know your tty device and your Arduino type.
-
-``` bash
-$ ./flash ACM0 m328p
-```
+To help test the receive process I have include an audio file (packet-bursts.wav).  You can use this file as input to the modem from your computer.  I use [audacity[(http://www.audacityteam.org) as an cheap osciliscope. 
 
 Visit [my site](http://unsigned.io) for questions, comments and other details.  Or email me at Mark at Grennan.com.  
 
